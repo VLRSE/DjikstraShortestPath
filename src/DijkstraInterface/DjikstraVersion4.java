@@ -196,7 +196,6 @@ public class DjikstraVersion4 extends JFrame implements ActionListener {
     
     //create the main panels and add its components onto it
     public static JPanel createMainPanels(JPanel mainPanel, JLabel panelsLabel, Component[] components){
-        System.out.println(Toolkit.getDefaultToolkit().getScreenSize().getWidth() + " " + Toolkit.getDefaultToolkit().getScreenSize().getHeight());
         //components constraints
         GridBagConstraints constraints = createConstraints(true, 0, 0, 3, 1);
         

@@ -17,195 +17,228 @@ import java.awt.event.ActionListener;
  * @author Admin
  */
 public class DjikstraVersion4 extends JFrame implements ActionListener {
-    public static DarkFrame frame;
-    public static JPanel mainPanel1, mainPanel2;
-    public static JScrollPane leftScrollPane, rightScrollPane ;
-    public static JSplitPane splitPane;
-    public static JTextArea edgesCollectionTxtArea, solutionTxtArea;
-    public static JLabel graphLabel ,solutionLabel, vertex1Label, vertex2Label, distanceLabel, inputEdgesLabel;
-    public static JButton defineGraphBTN,  addEdgesBTN, solutionBTN, newGraphBTN;
-    public static JTextField inputEdgesTxtFLD, vertex1TextField, vertex2TextField, distTextField;
-    public static Container contentPane;
     
-    public static final Color PRIMARY_BG_COLOR = Color.decode("#212121");
-    public static final Color SECONDARY_BG_COLOR = Color.decode("#424242");
+    DarkFrame frame;
+    JPanel mainPanel1, mainPanel2;
+    JScrollPane leftScrollPane, rightScrollPane ;
+    JSplitPane splitPane;
+    JTextArea edgesCollectionTxtArea, solutionTxtArea;
+    JLabel graphLabel ,solutionLabel, vertex1Label, vertex2Label, distanceLabel, inputEdgesLabel;
+    JButton defineGraphBTN,  addEdgesBTN, solutionBTN, newGraphBTN;
+    JTextField inputEdgesTxtFLD, vertex1TextField, vertex2TextField, distTextField;
+    Container contentPane;
     
-    public static final Color PRIMARY_TEXT_COLOR = Color.decode("#E0E0E0");
-    public static final Color SECONDARY_TEXT_COLOR = Color.decode("#F5F5F5");
+    Dimension minimumSize;
+     
+     
+    Color PRIMARY_BG_COLOR = Color.decode("#121212");
+    Color SECONDARY_BG_COLOR = Color.decode("#424242");
     
-    public static final Color PRIMARY_BG_TEXTFLD_COLOR = Color.decode("#616161");
+    Color PRIMARY_TEXT_COLOR = Color.decode("#E0E0E0");
+    Color SECONDARY_TEXT_COLOR = Color.decode("#F5F5F5");
     
-    public static final Color PRIMARY_BTN_BG_COLOR = Color.decode("#2979FF");
-    private static final long serialVersionUID = 1L;
+    Color PRIMARY_BG_TEXTFLD_COLOR = Color.decode("#616161");
+    
+    Color PRIMARY_BTN_BG_COLOR = Color.decode("#2979FF");
 
 
-    public static void main(String[] args) throws FileNotFoundException{
-       frame = new DarkFrame("Djikstra´s Shortest Path Algorithm");
-       
-//       double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth()*0.7;
-//       double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight()*0.7;
-//       
-//       frame.setMinimumSize(new Dimension((int)width, (int)height));
-       
-       createGUI();
-       
-       
-       frame.setVisible(true);
-    }
     
- 
-    //initialize all the components
-    public static void createGUI(){       
+    
+        public DjikstraVersion4(){
+         
+            frame = new DarkFrame("Djikstra´s Shortest Path Algorithm");
+             
+            /*
+            *create Main Panels
+            */
+            mainPanel1 = new DarkPanel(); 
+            mainPanel2 = new DarkPanel(); 
+            /*
+            *create JscrollPane objects for left and right panels of splitPane
+            */
+            
+            minimumSize = new Dimension(100, 50);        
+            leftScrollPane = new JScrollPane(mainPanel1);        
+            rightScrollPane = new JScrollPane(mainPanel2);     
+            leftScrollPane.setMinimumSize(minimumSize);
+            rightScrollPane.setMinimumSize(minimumSize);
+            
+            //create a JSplitPane object
+            splitPane = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT,
+                           leftScrollPane, rightScrollPane); 
+            splitPane.setResizeWeight(0.5);
+            splitPane.setOneTouchExpandable(true);
+            
+            
+             /*
+            *get contentPane, and add the splitPane to the contentPane
+            */
+          
+             contentPane = frame.getContentPane();
+      
+
+            /*
+            *Create Components of the leftScrollPane
+            */            
+            graphLabel = new DarkLabel( "GRAPH");
+            
+            inputEdgesLabel = new DarkLabel( "Number of edges: ");
+            inputEdgesTxtFLD =  new JTextField("e.g. 2 ", 5);
+            defineGraphBTN = new JButton("DEFINE GRAPH");
+            defineGraphBTN.addActionListener(this);
+            
+              /*
+            *create Components for the FROM inputField, then add to a panel 
+            */
+            vertex1Label = new DarkLabel("From : ");            
+            vertex1TextField =  new JTextField("e.g. A or Milan ", 30);
         
+            /*
+            *create Components for the TO inputField, then add to a panel 
+            */
+            vertex2Label = new DarkLabel("To : ");
+            vertex2TextField =  new JTextField("e.g. B or Rome ", 30);
+
+            /*
+            *create Components for the DISTANCE inputField, then add to a panel 
+            */
+            distanceLabel = new DarkLabel("Distance: ");        
+            distTextField =  new JTextField("e.g. 5 ", 30);
+        
+          /*
+          *create Components for the edgesCollectionTxtArea, then add to a panel 
+          */
+            addEdgesBTN = new JButton("ADD EDGES");
+            addEdgesBTN.addActionListener(this);
+            edgesCollectionTxtArea =  new DarkTextArea( true);    
+            
+            /*
+          *create Components for the right-side of the splitPane
+          */
+            solutionLabel = new DarkLabel("SOLUTION");
+            solutionTxtArea = new DarkTextArea(true);  
+            solutionBTN = new JButton(" SOLUTION " );
+            newGraphBTN = new JButton(" NEW GRAPH ");
+            
+            
+            createGUI();
+            frame.pack();
+        }
+        
+        
+       //initialize all the components
+    public void createGUI(){       
         
         contentPane = frame.getContentPane();
         
+        //create MainPanel1 -- lies on the left side of the frame
         createMainPanel1();      
         
-        /*
-        *TODO: add components to the right side of the panel
-        */
-        
-        /*
-        *create mainPanel2, on the right, and its components
-        */
-        solutionLabel = createLabel( "SOLUTION", JLabel.CENTER);
-        solutionTxtArea = createTextArea(true );    
-         
-        
-        solutionBTN = createButton(" SOLUTION ", false );
-        newGraphBTN = new JButton(" NEW GRAPH ");
-        
-        /*create a JPanel object to hold the components of the main panel*/
-        
-        JPanel panelInputEdges;
-        GridBagConstraints constraints;
-        
-        
-        constraints = createConstraints(true, 0, 0, 3, 1);
-        panelInputEdges = createPanel( new FlowLayout(), solutionBTN, FlowLayout.LEADING);
-        panelInputEdges.add(newGraphBTN, FlowLayout.CENTER);
-        
-        
-        Component[] mainPanel2Components = { solutionTxtArea, panelInputEdges };
-        
-        mainPanel2 = createMainPanels(mainPanel1, solutionLabel, mainPanel2Components); 
-        
-       
-
-         //create JScrollPane objects          
-        Dimension minimumSize = new Dimension(100, 50);
-        
-        leftScrollPane = new JScrollPane(mainPanel1);        
-        rightScrollPane = new JScrollPane(mainPanel2);     
-        leftScrollPane.setMinimumSize(minimumSize);
-        rightScrollPane.setMinimumSize(minimumSize);
-       
-         //create a JSplitPane object
-        splitPane = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT,
-                           leftScrollPane, rightScrollPane); 
-         //set equal size of the two components on JSplitpane 
-        splitPane.setResizeWeight(0.5);
-        splitPane.setOneTouchExpandable(true);    
-        
+        //create MainPanel2 -- lies on the right side of the frame
+        createMainPanel2();
         
         /*
         *get contentPane, and add the splitPane to the contentPane
         */
         contentPane = frame.getContentPane();
         contentPane.add(splitPane);
-
    
     }
+    
+    
     // create and add components to the panel on the left of the frame
-    public static void createMainPanel1(){
+    public void createMainPanel1(){
         
         /*
         *TODO: CHANGE LAYOUTMANAGER OF inputPANELS
         */
-        JPanel panelInputEdges, vertex1Panel, vertex2Panel, distancePanel, edgesCollectionPanel;
+        JPanel panelInputEdges, vertex1Panel, vertex2Panel, distancePanel, addEdgesBTNPanel;
         GridBagConstraints constraints;
         
         constraints = createConstraints(true, 0, 0, 1, 1);
+        constraints.weightx = 0.3;
         
-        //create top Label
-        graphLabel = createLabel( "GRAPH", JLabel.CENTER);
-        
-       
-
-       /*
-       *create Components for the inputTextField, then add to a panel 
-       */
-       
-       inputEdgesLabel = createLabel( "Number of edges: ", JLabel.CENTER);
-       inputEdgesTxtFLD =  createTextField("e.g. 2 ", 5);
-       defineGraphBTN = new JButton("DEFINE GRAPH");
-        
-        panelInputEdges = createPanel(new GridBagLayout(), inputEdgesLabel, constraints);
-        constraints.gridx = 1;
-        panelInputEdges.add(inputEdgesTxtFLD, constraints);
-        
-        constraints.gridx = 3;
-        constraints.anchor = GridBagConstraints.LINE_END;
-        panelInputEdges.add(defineGraphBTN, constraints);        
-        
+        panelInputEdges = new DarkPanel();
+        vertex1Panel  = new DarkPanel();
+        vertex2Panel  = new DarkPanel();
+        distancePanel = new DarkPanel();
+        addEdgesBTNPanel = new DarkPanel();
         /*
-       *create Components for the FROM inputField, then add to a panel 
-       */
-        constraints.gridx = 0;
-        vertex1Label = new JLabel("From : ");
-        vertex1Label.setForeground(SECONDARY_TEXT_COLOR);
-        vertex1TextField = createTextField("e.g. A or Milan ", 30);
+        *Add the labels on every panels
+        */        
+        panelInputEdges.add(inputEdgesLabel, constraints);
+        vertex1Panel.add(vertex1Label, constraints);
+        vertex2Panel.add(vertex2Label, constraints);
+        distancePanel.add(distanceLabel, constraints);
         
-        vertex1Panel  = createPanel( new GridBagLayout(), vertex1Label, constraints);      
+         /*
+        *Add the textFields components on every panels
+        */
+        constraints.gridx = 2;
+        panelInputEdges.add(inputEdgesTxtFLD, constraints);
         vertex1Panel.add(vertex1TextField);
-        
-         /*
-       *create Components for the TO inputField, then add to a panel 
-       */
-         
-        vertex2Label = new JLabel("To : ");
-        vertex2Label.setForeground(SECONDARY_TEXT_COLOR);
-        vertex2TextField = createTextField("e.g. B or Rome ", 30);
-        
-        vertex2Panel  = createPanel( new GridBagLayout(), vertex2Label, constraints);      
         vertex2Panel.add(vertex2TextField);
+        distancePanel.add(distTextField, constraints);
          /*
-       *create Components for the DISTANCE inputField, then add to a panel 
-       */
-        distanceLabel = new JLabel("DISTANCE: ");        
-        distTextField = createTextField("e.g. 5 ", 30);
+        *Add the button on every panels
+        */        
+//     
+        constraints.gridx = 3;
+        constraints.insets = new Insets(0,20,0,0);
+        panelInputEdges.add(defineGraphBTN, constraints);   
         
-         /*
-       *create Components for the edgesCollectionTxtArea, then add to a panel 
-       */
-        addEdgesBTN = new JButton("ADD EDGES");
-        edgesCollectionTxtArea = createTextArea(false );    
-         
+         constraints.gridx = 2;
+         constraints.fill = GridBagConstraints.NONE;
+        addEdgesBTNPanel.add(addEdgesBTN, constraints);
         
-        distancePanel = createPanel( new GridBagLayout(), addEdgesBTN, constraints); 
         
         /*
         *Add components to the mainPanel1
         */
-        Component[] mainPanel1Components = { panelInputEdges, vertex1Panel, vertex2Panel, distancePanel, edgesCollectionTxtArea};
-        mainPanel1 = createMainPanels(mainPanel1, graphLabel, mainPanel1Components);
+        Component[] mainPanel1Components = {graphLabel, panelInputEdges, vertex1Panel, vertex2Panel, 
+                    distancePanel,addEdgesBTNPanel, edgesCollectionTxtArea};
+        
+        //call the add components method to add components to the mainPanel1
+        addComponents(mainPanel1, graphLabel, mainPanel1Components);
 
     }
+     
+    /*
+    *create mainPanel2, on the right of the frame, and its components
+    */
+    public void createMainPanel2(){
+  
+        /*create a JPanel object to hold the components of the main panel*/
+        
+        JPanel panelInputEdges;
+        GridBagConstraints constraints;
+        
+        constraints = createConstraints(true, 0, 0, 1, 1
+        );
+        
+        panelInputEdges = new DarkPanel();
+        panelInputEdges.add(solutionBTN, constraints);
+        
+//        constraints.weightx = 0.5;
+        constraints.gridx = 3;
+        constraints.insets = new Insets(0,30,0,10);
+        panelInputEdges.add(newGraphBTN, constraints);
+        
+        Component[] components = {solutionLabel,  solutionTxtArea, panelInputEdges };
+
+        //call the add components method to add components to the mainPanel2        
+        addComponents(mainPanel2, solutionLabel, components); 
     
- 
+    }
     
     //create the main panels and add its components onto it
-    public static JPanel createMainPanels(JPanel mainPanel, JLabel panelsLabel, Component[] components){
+    public void addComponents(JPanel mainPanel, JLabel panelsLabel, Component[] components){
         //components constraints
         GridBagConstraints constraints = createConstraints(true, 0, 0, 3, 1);
         
         //create main panels with labels
         constraints.insets = new Insets(5,0,50,5);          
         panelsLabel.setFont(createFont(false));
-        
-        //create mainPanel
-        mainPanel = createPanel( new GridBagLayout(), panelsLabel, constraints);
         
         //reset insets for the rest of the components
         constraints.insets = new Insets(0,0,10,0);    
@@ -218,29 +251,9 @@ public class DjikstraVersion4 extends JFrame implements ActionListener {
             mainPanel.add(component, constraints);
         }
         
-        return mainPanel;
     }
     
-    //create an JPanel object
-    public static JPanel createPanel( LayoutManager layout, Component component, Object constraints){
-        JPanel panel = new JPanel(layout);
-        panel.setBackground(PRIMARY_BG_COLOR);
-        panel.add(component, constraints);
-        
-        return panel;
-    }
-    
-    //create a dark-themed JLabel object
-    public static JLabel createLabel(String text, int  textAlignment ){
-        JLabel label = new JLabel(text);
-        label.setBackground(PRIMARY_BG_COLOR);
-        label.setForeground(PRIMARY_TEXT_COLOR);
-        label.setHorizontalAlignment(textAlignment);
-        
-        return label;
-    }
-    
-    public static JTextField createTextField(String promptText, int columns){
+    public JTextField createTextField(String promptText, int columns){
         JTextField textField = new JTextField(promptText, columns);
         //        textField.setPreferredSize(new Dimension(100,25));
 
@@ -254,25 +267,9 @@ public class DjikstraVersion4 extends JFrame implements ActionListener {
         return textField;
     }
     
-       public static JTextArea createTextArea(boolean disabled){
-        
-        JTextArea textArea = new JTextArea();
-        textArea.setEditable(false);
-        textArea.setBackground(PRIMARY_BG_TEXTFLD_COLOR);
-        textArea.setDisabledTextColor(PRIMARY_BG_COLOR);
-        textArea.setPreferredSize(new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()*0.2),
-                (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight()*0.2)));
-        if(disabled){
-           textArea.setEnabled(false);
-           textArea.setBackground(PRIMARY_BG_COLOR);
-           textArea.setBorder(BorderFactory.createLineBorder(SECONDARY_BG_COLOR, 1, true));
-        }
-
-        return textArea;
-        
-    }
+       
     
-    public static JButton createButton(String text, boolean disabled ){
+    public JButton createButton(String text, boolean disabled ){
         JButton button = new JButton(text);
         
         if(disabled){
@@ -289,7 +286,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener {
         return button;
     }
 
-    public static GridBagConstraints createConstraints(boolean shouldFill, int gridX, int gridY, int gridWeight, int gridHeight){
+    public GridBagConstraints createConstraints(boolean shouldFill, int gridX, int gridY, int gridWeight, int gridHeight){
         GridBagConstraints c = new GridBagConstraints();
         
         if(shouldFill){
@@ -306,7 +303,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener {
     }   
     
     
-    public static Font createFont( boolean primaryText){
+    public Font createFont( boolean primaryText){
         Font titleFont;
         
         if(!primaryText){
@@ -320,7 +317,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener {
        
     }
     
-    public static Color getTransparentColor(Color color){
+    public Color getTransparentColor(Color color){
         int red = color.getRed();
         int blue = color.getBlue();
         int green = color.getGreen();
@@ -330,9 +327,32 @@ public class DjikstraVersion4 extends JFrame implements ActionListener {
        
         return transparentColor;
     }
-    
-    public void actionPerformed(ActionEvent e) { 
+    /*
+    **TODO: create actionPerformed for defineGraphBTN and addEdgesBTN
+    */
+    public void defineGraphBTNActionPerformed(ActionEvent e) { 
    
+    /*
+    **TODO: create actionPerformed for defineGraphBTN and addEdgesBTN
+    */
+        
+    }
+    
+     public void addEdgesBTNActionPerformed(ActionEvent e) { 
+   
+    /*
+    **TODO: create actionPerformed for defineGraphBTN and addEdgesBTN
+    */
+         
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
+        
+        /*
+        *TODO:  
+        */
     }
     
     
@@ -366,5 +386,62 @@ public class DjikstraVersion4 extends JFrame implements ActionListener {
               }
           
         }
+        
+          
     }
+    
+    public class DarkTextArea extends JTextArea{
+        
+        
+        public DarkTextArea(boolean disabled){
+        
+            this.setEditable(false);
+            this.setBackground(PRIMARY_BG_TEXTFLD_COLOR);
+            this.setDisabledTextColor(PRIMARY_BG_COLOR);
+            this.setPreferredSize(new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()*0.2),
+                    (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight()*0.2)));
+            
+            if(disabled){
+                this.setEnabled(false);
+                this.setBackground(PRIMARY_BG_COLOR);
+                this.setBorder(BorderFactory.createLineBorder(SECONDARY_BG_COLOR, 1, true));
+            }
+        }
+        
+    }
+    
+    public class DarkLabel extends JLabel{
+
+        private final long serialVersionUID = 1L;
+        
+        private String text;
+        
+        public DarkLabel(String text){
+            
+            super(text);
+            this.setText(text);
+            this.setBackground(PRIMARY_BG_COLOR);
+            this.setForeground(PRIMARY_TEXT_COLOR);
+            this.setHorizontalAlignment(JLabel.CENTER);
+        }
+        
+    }
+    
+    
+    
+    
+        
+    public static void main(String[] args) throws FileNotFoundException{
+            
+           EventQueue.invokeLater(new Runnable(){
+               @Override
+               public void run() {
+                  new DjikstraVersion4();
+               }
+               
+           });
+               
+       
+      }
+    
 }

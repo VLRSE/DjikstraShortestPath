@@ -5,7 +5,8 @@
  */
 package DijkstraInterface;
 
-import DarkComponents.DarkFrame;
+
+import Class.DarkFrame;
 import java.awt.*;
 import javax.swing.*;
 import java.io.FileNotFoundException;

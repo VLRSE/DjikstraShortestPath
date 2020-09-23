@@ -244,6 +244,7 @@ public class JDijkstraVersion3 extends javax.swing.JFrame {
         edgesCollectionTxtArea.setEnabled(true);
         solutionTxtArea.setEnabled(false);
         solutionBTN.setEnabled(false);
+        newGraphBTN.setEnabled(false);
         
         
        

@@ -1,3 +1,3 @@
 # DjikstraShortestPath
 
-A GUI for the Djikstra´s Shortest Path Algorithm
+A dark mode GUI for the Djikstra´s Shortest Path Algorithm one-directed Graph

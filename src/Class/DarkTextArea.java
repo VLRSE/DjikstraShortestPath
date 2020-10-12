@@ -28,7 +28,7 @@ public class DarkTextArea extends JTextArea implements FocusListener {
         addFocusListener(this);
         setForeground(PRIMARY_TEXT_COLOR);
         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 50, 0, 0),
-                     BorderFactory.createLineBorder(PRIMARY_BG_COLOR)));
+                     BorderFactory.createLineBorder(PRIMARY_TEXT_COLOR.darker())));
         setAlignmentX(JTextArea.CENTER_ALIGNMENT);
         
         if (enabled == false) {
@@ -41,8 +41,8 @@ public class DarkTextArea extends JTextArea implements FocusListener {
     @Override
     public void focusGained(FocusEvent e) {
         this.setEnabled(true);
-        this.setOpaque(true);
-        this.setBackground(PRIMARY_BG_COLOR);
+        this.setOpaque(false);
+       
     }
 
     @Override

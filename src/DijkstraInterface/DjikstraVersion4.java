@@ -14,12 +14,12 @@ import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
+import javax.swing.text.*;
 /**
  *
  * @author Admin
  */
-public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListener, FocusListener {
+public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListener, FocusListener{
     
     
     public DarkFrame frame;
@@ -35,7 +35,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
     public ArrayList <JComponent>sources, nextObject;         
           
     public final Color PRIMARY_BG_COLOR = Color.decode("#262524");
-    public final Color SECONDARY_BG_COLOR = Color.decode("#212121");    
+    public final Color SECONDARY_BG_COLOR = Color.decode("#131b26");    
     public final Color PRIMARY_TEXT_COLOR = Color.decode("#fafafa");
     public final Color SECONDARY_TEXT_COLOR = Color.decode("#F5F5F5");    
     public final Color PRIMARY_BG_TEXTFLD_COLOR = Color.decode("#f5f5f5");
@@ -44,16 +44,18 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
     public final Color ERROR_COLOR = Color.decode("#CF6679");
     
     public Font titleFont, normalTextFont, promptTextFont;
-    
+    public String[] textAreaTitles = {" START \t\tEND\tDISTANCE\n\n", "\tPATH\n"};
+    public int defineGraphBTNClickCounter = 0;
     private final long serialVersionUID = 1L;
     
     
     private  Graph.Edge[] EDGES;
+    private  Graph GRAPH ;
     private  String START = "";
-    private String END = "";    
+    private  String END = "";    
     private  String str = "";
     private  int edgeCount = 0;
-    private int x = 0, distanceInput;
+    private int x, distanceInput;
     private String vertex1Input, vertex2Input;
     private ArrayList<Object> vertex1Array, vertex2Array;
        
@@ -68,7 +70,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
     public void initComponents(){
         
         frame = new DarkFrame("Djikstra´s Shortest Path Algorithm");
-        sources = new ArrayList<JComponent>();
+        sources = new ArrayList<>();
                
         mainPanel1 = new DarkPanel(this);
         mainPanel2 = new DarkPanel(this);
@@ -101,7 +103,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
         inputEdgesTxtFLD =  new DarkTextField(" e.g. 2 ", 5, true, this);
         sources.add(inputEdgesTxtFLD);
                 
-        defineGraphBTN =  new DarkButton("Define Graph", false, this);
+        defineGraphBTN =  new DarkButton("Define Graph", true, this);
         sources.add(defineGraphBTN);
 
         //create Components for the FROM inputField, then add to a panel   
@@ -128,7 +130,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
         sources.add(addEdgesBTN);
         
         DarkLabel label = new DarkLabel("START");
-        edgesCollectionTxtArea = new DarkTextArea(false,  " START \t\tEND\tDISTANCE\n\n", frame, 10,20 ); 
+        edgesCollectionTxtArea = new DarkTextArea(false,  textAreaTitles[0], frame, 10,20 ); 
         sources.add(edgesCollectionTxtArea);
 
         /*
@@ -141,7 +143,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
         solutionLabel = new DarkLabel( "SOLUTION", true);
         newGraphBTN = new DarkButton("New Graph" , false, this);
         sources.add(newGraphBTN);
-        solutionTxtArea = new DarkTextArea(false,  "PATH\n", frame , 10,20);      
+        solutionTxtArea = new DarkTextArea(false,  textAreaTitles[1], frame , 10,20);      
         sources.add(solutionTxtArea);
 
         
@@ -187,6 +189,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
         constraints = createConstraints(true, 0, 0, 1, 1);
 
         inputEdgesTxtFLD.setFont(promptTextFont);
+              
         inputEdgesLabel.setHorizontalAlignment(JLabel.CENTER);
         vertex1Label.setHorizontalAlignment(JLabel.CENTER);
         vertex2Label.setHorizontalAlignment(JLabel.CENTER);
@@ -212,12 +215,15 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
         constraints.gridx = 1;
       
         inputEdgesPanel.add(inputEdgesTxtFLD, constraints);
-        vertex1TextField.setEnabled(false);          
+        vertex1TextField.setEnabled(false);    
         vertex1Panel.add(vertex1TextField,constraints);
         vertex2TextField.setEnabled(false);
+//        vertex2TextField.addPropertyChangeListener("value", this );
         vertex2Panel.add(vertex2TextField,constraints );
         distTextField.setEnabled(false);
+//        distTextField.addPropertyChangeListener("value", this );
         distancePanel.add(distTextField, constraints); 
+        
         
         addEdgesBTNPanel.add(addEdgesBTN, constraints);
         
@@ -230,7 +236,6 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
         addEdgesBTNPanel.add(addEdgesBTN, constraints);
        
         edgesCollectionTxtArea.setFont(normalTextFont.deriveFont(14));
-        edgesCollectionTxtArea.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0),BorderFactory.createLineBorder(SECONDARY_BG_COLOR)));
         edgesCollectionPanel.add(edgesCollectionTxtArea, constraints);
         
         graphLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
@@ -334,19 +339,45 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
     }
     //actionPerformed for defineGraphBTn
     public void defineGraphBTNActionPerformed() {
-       //enable vertex1TextField and requestFocus
-       enableDisableComponents(null,vertex1TextField,true);
-       inputEdgesTxtFLD.setEnabled(false);
-       defineGraphBTN.setEnabled(false);
-   
-       edgeCount= Integer.parseInt(inputEdgesTxtFLD.getText());
-       EDGES = new Graph.Edge [edgeCount];
+         
+        x = 0;
+        defineGraphBTNClickCounter++;
+          
+        //check if the number of vertex inputted is a digit
+        if(!inputEdgesTxtFLD.getText().matches("[1-9]{1,20}")) {
+            JOptionPane.showMessageDialog(null, "Enter digit only and greater than 0", "Input Error", JOptionPane.ERROR_MESSAGE);
+            inputEdgesTxtFLD.requestFocus();
+           
+        }
+        else{
+             //enable vertex1TextField and requestFocus
+            enableDisableComponents(null,vertex1TextField,true);
+            edgeCount = Integer.parseInt(inputEdgesTxtFLD.getText());
+            
+            //determining whether the input in inputEdgesTxtFLD has changed by checking the number of clicks of defineGraphBTN                     
+            if(defineGraphBTNClickCounter > 1 ){
+                
+                edgesCollectionTxtArea.setText(textAreaTitles[0]);
+                
+                //reinitialize the array EDGES
+                 EDGES = new Graph.Edge [edgeCount];
+                 
+                 //reset elements for the vertex choices for the solution
+                 resetComponents(); 
+                 vertex1TextField.requestFocus();
+            }
+            else {
+                EDGES = new Graph.Edge [edgeCount];
+            }
+         
+        }
     } 
    
     //actionPerformed for addEdgesBTN
     public void addEdgesBTNActionPerformed() {
-        distanceInput = Integer.parseInt(distTextField.getText());
-        solutionBTN.requestFocus();
+       solutionBTN.requestFocus();
+       newGraphBTN.setEnabled(true);
+       
         showGraph();
     } 
     
@@ -356,9 +387,9 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
         vertex1Input = vertex1TextField.getText();
         vertex2Input = vertex2TextField.getText();
         distanceInput = Integer.parseInt(distTextField.getText());
-        
         EDGES[x] = new Graph.Edge(vertex1Input,vertex2Input, distanceInput );
          x+=1;
+          
          //collect the start vertices
          if( !vertex1Array.contains(vertex1Input))vertex1Array.add(vertex1Input);
          
@@ -388,7 +419,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
      //actionPerformed for solutionBTN
     public void solutionBTNActionPerformed(){
         
-        Graph GRAPH = new Graph(EDGES);
+        GRAPH = new Graph(EDGES);
         GRAPH.graph.keySet();
         START = (String)JOptionPane.showInputDialog(null, "Choose START vertex", 
             "Input", JOptionPane.QUESTION_MESSAGE, null,vertex1Array.toArray(),vertex1Array.get(0)  );
@@ -413,18 +444,18 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
     public void newGraphBTNActionPerformed(){
         //call resetComponents method
         resetComponents();
+        inputEdgesTxtFLD.setEnabled(true);
+        inputEdgesTxtFLD.requestFocus();
     }
     //method to reset components after newGraphBTN actionPerformed
     public void resetComponents(){
         x = 0;
         
         //reset the components: enable inputEdgesTxtFLD and requestFocus
-        inputEdgesTxtFLD.setEnabled(true);
-        inputEdgesTxtFLD.requestFocus();
-        
+      
         edgesCollectionTxtArea.setAlignmentX(SwingConstants.CENTER);
-        edgesCollectionTxtArea.setText(" START \t\tEND\tDISTANCE\n\n");
-        solutionTxtArea.setText("PATH\n");
+        edgesCollectionTxtArea.setText(textAreaTitles[0]);
+        solutionTxtArea.setText(textAreaTitles[1]);
         
         //disable the TextAreas and the Solution Button
         JComponent[] com = {edgesCollectionTxtArea, solutionTxtArea, solutionBTN};
@@ -437,6 +468,7 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
         vertex1Array.clear();
         vertex2Array.clear();
     }
+    
     // method to disable and reset the text of the Textfields
     public void resetTextFields(){
         JTextField[] fields = {vertex1TextField, vertex2TextField, distTextField };
@@ -553,15 +585,13 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
                 newGraphBTNActionPerformed();
             }
         }
-        
         return nextComponent.isEnabled();
     }
-   
+  
+    
+    
      public static void main(String[] args) throws FileNotFoundException{
         EventQueue.invokeLater( DjikstraVersion4::new) ;
     }
-     
-     
-     
-    
+   
 }

@@ -16,7 +16,7 @@ import javax.swing.*;
  *
  * @author Admin
  */
-public class DarkTextField extends JTextField implements FocusListener {
+public class DarkTextField extends JTextField implements FocusListener{
     private boolean isEnabled;    
     private final DjikstraVersion4 outer;
     private final Color DISABLED_TEXT_COLOR = Color.decode("#424242");
@@ -65,9 +65,9 @@ public class DarkTextField extends JTextField implements FocusListener {
 
     @Override
     public void focusLost(FocusEvent e) {
-        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outer.SECONDARY_BG_COLOR.brighter(), 2),
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outer.PRIMARY_BG_TEXTFLD_COLOR.darker(), 2),
                 BorderFactory.createEmptyBorder(8, 18, 8, 10)));
-        setOpaque(false);
+         setBackground(outer.SECONDARY_BG_COLOR);
         setForeground(outer.PRIMARY_BG_TEXTFLD_COLOR.darker());
     }
     

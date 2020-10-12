@@ -28,12 +28,9 @@ public class DarkButton extends JButton implements FocusListener {
         setEnabled(enabled);
         setFont(outer.normalTextFont);
         addFocusListener(this);
-        
-        if (enabled == false) {
-            setForeground(outer.SECONDARY_TEXT_COLOR);
-            setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outer.SECONDARY_BG_COLOR, 2, true), BorderFactory.createEmptyBorder(8, 18, 8, 18)));
-            this.setOpaque(false);
-        }
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outer.PRIMARY_BTN_BG_COLOR, 1, true), BorderFactory.createEmptyBorder(8, 18, 8, 18)));
+
+       
     }
 
     @Override

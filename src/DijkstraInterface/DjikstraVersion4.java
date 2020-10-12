@@ -34,8 +34,8 @@ public class DjikstraVersion4 extends JFrame implements ActionListener, KeyListe
     
     public ArrayList <JComponent>sources, nextObject;         
           
-    public final Color PRIMARY_BG_COLOR = Color.decode("#121212");
-    public final Color SECONDARY_BG_COLOR = Color.decode("#424242");    
+    public final Color PRIMARY_BG_COLOR = Color.decode("#262524");
+    public final Color SECONDARY_BG_COLOR = Color.decode("#212121");    
     public final Color PRIMARY_TEXT_COLOR = Color.decode("#fafafa");
     public final Color SECONDARY_TEXT_COLOR = Color.decode("#F5F5F5");    
     public final Color PRIMARY_BG_TEXTFLD_COLOR = Color.decode("#f5f5f5");

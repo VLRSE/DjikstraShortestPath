@@ -19,6 +19,8 @@ import javax.swing.*;
 public class DarkTextField extends JTextField implements FocusListener {
     private boolean isEnabled;    
     private final DjikstraVersion4 outer;
+    private final Color DISABLED_TEXT_COLOR = Color.decode("#424242");
+    private final Color PRIMARY_TEXT_COLOR = Color.decode("#Fafafa");
 
     public DarkTextField(String text, int columns, boolean enabled, final DjikstraVersion4 outer) {
         super(text, columns);
@@ -30,15 +32,22 @@ public class DarkTextField extends JTextField implements FocusListener {
        
     }
     public void setProperties(){
-        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outer.SECONDARY_BG_COLOR, 2),
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(DISABLED_TEXT_COLOR, 2),
                  BorderFactory.createEmptyBorder(8, 18, 8, 10)));
-        setDisabledTextColor(outer.SECONDARY_BG_COLOR.brighter());
+        setDisabledTextColor(DISABLED_TEXT_COLOR.brighter());
         setFont(outer.promptTextFont);
         setEnabled(isEnabled);
+        this.setOpaque(false);
+        
         if (this.isEnabled() == false) {
             setFont(outer.promptTextFont);
-            setOpaque(false);
-            setForeground(outer.SECONDARY_BG_COLOR);
+//            setOpaque(false);
+            setForeground(outer.PRIMARY_BG_COLOR);
+        }
+        else{
+            setOpaque(true);
+            this.setBackground(outer.SECONDARY_BG_COLOR);
+            this.setForeground(DISABLED_TEXT_COLOR);
         }
     }
     
@@ -47,10 +56,10 @@ public class DarkTextField extends JTextField implements FocusListener {
         setText("");
         setEnabled(true);
         setOpaque(true);
-        setBackground(outer.PRIMARY_BG_TEXTFLD_COLOR);
-        setForeground(outer.SECONDARY_BG_COLOR);
+        setBackground(outer.SECONDARY_BG_COLOR);
+        setForeground(PRIMARY_TEXT_COLOR.brighter());
         setFont(outer.normalTextFont);
-          setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.decode("#3498db"), 2, true),
+          setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.decode("#3498db"), 1, true),
                     BorderFactory.createEmptyBorder(8, 18, 8, 10)));
     }
 
